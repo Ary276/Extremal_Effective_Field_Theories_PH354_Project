@@ -2,8 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 #import g3_linear_solver as g3
 import pulp as pl
-from multiprocessing import Process
-
+import multiprocessing as mp
 d = 4
 
 def v(x, j, n):
@@ -134,19 +133,8 @@ def g4_max(g3_A, n, J, X, print_sol = False):
     return vals
 
 
-n = int(input("Enter the Number of constraints (1, 2, 3, 5): "))
-g3_A = -10
-Js = np.arange(0, 40, 2)
-Xs = np.linspace(0, 10, 1000, endpoint=True)
-vals = g4_min(g3_A, n, Js, Xs, print_sol=True)
-print("g4~ >= ", vals[0] + g3_A*vals[1], "for g3 = ", g3_A)
-print("\n")
-vals = g4_max(g3_A, n, Js, Xs, print_sol=True)
-print(vals)
-print("g4~ <= ", vals[0] + g3_A*vals[1], "for g3 = ", g3_A)
-print("\n")
-
-def plot_loops(i, g3_s, n, Js, Xn, Mat, dx, dy, pad):
+def plot_loop(i, g3_s, n, Js, Xn, dx, dy, pad):
+    Mat = np.zeros((int(14/dx)+2*pad, int(0.5/dy)+2*pad))
     sol1 = g4_min(g3_s[i], n, Js, Xn)
     h1 = sol1[0] + g3_s[i]*sol1[1]
     sol2 = g4_max(g3_s[i], n, Js, Xn)
@@ -156,35 +144,49 @@ def plot_loops(i, g3_s, n, Js, Xn, Mat, dx, dy, pad):
         h1 = int(np.round(h1, 2)*int(1/dy))
         h2 = int(np.round(h2, 2)*int(1/dy))
         Mat[i+pad, h1:h2] = 1
+    return Mat
     
 def plot():
     print("\nPlotting the g3~ g4~ plane")
-    dx = 0.1
+    dx = 0.05
     dy = 0.01
-    pad = 5
-    Mat = np.zeros((int(14/dx)+2*pad, int(0.5/dy)+2*pad))
-    print(Mat.shape)
-    Xn = np.linspace(0, 2, 200, endpoint=True)
+    pad = 1
+    Xn = np.linspace(0, 5, 500, endpoint=True)
     g3_s = np.linspace(-11, 3, int(14/dx), endpoint=True)
     x_tick = np.round(np.linspace(-11-pad*dx, 3+pad*dx, 11, endpoint=True), 2)
     y_tick = np.round(np.linspace(0-pad*dy, 0.5+pad*dy, 11, endpoint=True), 2)
     print(g3_s.shape)
-    processes = [Process(target=plot_loops, args=(i, g3_s, n, Js, Xn, Mat, dx, dy, pad)) for i in range(int(14/dx))]
-    for p in processes:
-        p.start()
-    for p in processes:
-        p.join()
+    #for i in range(int(14/dx)):
+    #    plot_loop(i, g3_s, n, Js, Xn, Mat, dx, dy, pad)
+    pool = mp.Pool(mp.cpu_count())
+    results = np.array(pool.starmap(plot_loop, [(i, g3_s, n, Js, Xn, dx, dy, pad) for i in range(int(14/dx))]))
+    pool.close()
+    Mat = np.sum(results, axis=0)
+    print(Mat.shape)
     Mat[:, -pad:] = 0
+    print(results.shape)
 
     plt.figure(figsize=(10, 10))
-    plt.imshow(Mat.transpose(), cmap='PuBu', aspect='auto', origin='lower', alpha=0.5)
+    plt.imshow(Mat.transpose(), cmap='RdPu', aspect='auto', origin='lower', alpha=0.5)
     plt.xlabel("g3~")
     plt.ylabel("g4~")
-    plt.title("g3~ g4~ plane")
+    plt.title("g3~ g4~ plane for n = "+str(n+3))
     plt.xticks(np.linspace(0, int(14/dx)+2*pad, 11, endpoint=True), x_tick)
     plt.yticks(np.linspace(0, int(0.5/dy)+2*pad, 11, endpoint=True), y_tick)
-    plt.minorticks_on()
-    plt.grid()
     plt.show()
 
-plot()
+
+if __name__ == "__main__":
+    n = int(input("Enter the Number of constraints (1, 2, 3, 5): "))
+    g3_A = -10
+    Js = np.arange(0, 40, 2)
+    Xs = np.linspace(0, 10, 1000, endpoint=True)
+    vals = g4_min(g3_A, n, Js, Xs, print_sol=True)
+    print("g4~ >= ", vals[0] + g3_A*vals[1], "for g3 = ", g3_A)
+    print("\n")
+    vals = g4_max(g3_A, n, Js, Xs, print_sol=True)
+    print(vals)
+    print("g4~ <= ", vals[0] + g3_A*vals[1], "for g3 = ", g3_A)
+    print("\n")
+
+    plot()
