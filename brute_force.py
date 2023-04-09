@@ -26,34 +26,37 @@ def coeff(order, vals, k, n):
 
 def loop(J_X, coeffs, it, order):
     coeff_list = np.zeros([0, order], dtype=np.float64)
-    for A in coeffs[0]:
-                for y in it:
-                    Flag = False
-                    y = np.insert(y, 0, [A, 1])
-                    for j_x in J_X:
-                        f = np.dot(v_i(j_x, order), y)
-                        if f < 0:
-                            Flag = True
-                            break
-                        else:
-                            continue
-                            
-                    if Flag == False:
-                        coeff_list = np.vstack((coeff_list, y))
-                    else:
-                        continue
+    A = coeffs
+    for y in it:
+        Flag = False
+        y = np.insert(y, 0, [A, 1])
+        for j_x in J_X:
+            f = np.dot(v_i(j_x, order), y)
+            if f < 0:
+                Flag = True
+                break
+            else:
+                continue
+                
+        if Flag == False:
+            coeff_list = np.vstack((coeff_list, y))
+        else:
+            continue
     return coeff_list
 
 def brute_force(J_X, vals, order, n):
     vals_old = np.zeros_like(vals)
-    eps = 1e-8
+    eps = 1e-5
     k = 0
-    while(k<20 and np.square(vals-vals_old).mean()>eps):
+    while(k<20 and np.linalg.norm(vals-vals_old)>eps):
         coeffs = coeff(order,vals, k, n)
         it = list(itertools.product(*coeffs[2:]))
-        with mp.Pool(mp.cpu_count()) as p:
-            coeff_list = np.array(p.starmap(loop, [(J_X, coeffs, it, order)]))
-        coeff_list = coeff_list[0]
+        #print(coeffs[0])
+        #print(it[0])
+        p = mp.Pool(mp.cpu_count())
+        coeff_list = np.array(p.starmap(loop, [(J_X, coeffs[0, i], it, order) for i in range(n)]), dtype=object)
+        p.close()
+        coeff_list = np.vstack(coeff_list)
         if coeff_list.size == 0:
             break
         else:
@@ -67,13 +70,16 @@ def brute_force(J_X, vals, order, n):
 
 
 if __name__ == '__main__':
-
+    order = int(input('Enter order: '))
     start = time.time()
     J = np.arange(0, 40, 2)
     X = np.linspace(0, 2, 100, endpoint=True)
     J_X = np.array(list(itertools.product(J, X)))
-    vals = np.array([0, 1, 0, 0])
-    out, k = brute_force(J_X, vals, 4, 20)
+    if order == 3:
+        vals = np.array([0, 1, 0])
+    elif order == 4:
+        vals = np.array([0, 1, 0, 0])
+    out, k = brute_force(J_X, vals, order, 20)
     end = time.time()
     print(out)
     print('k = ', k)

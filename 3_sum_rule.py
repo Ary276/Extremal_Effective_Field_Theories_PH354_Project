@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
-J = np.arange(0, 20, 2)
+start = time.time()
+J = np.arange(0, 40, 2)
 X = np.linspace(0, 2, 100, endpoint=True)
 
 
@@ -63,6 +65,7 @@ print('k = ', k)
 print('alpha = ', a)
 print('beta = ', b)
 
+print('Time taken = ', time.time()-start)
 def f(x, j):
     return a*v(x,j)[0]/(1+x)**2 + v(x,j)[1]/(1+x)**3 + b*v(x,j)[2]/(1+x)**4
 

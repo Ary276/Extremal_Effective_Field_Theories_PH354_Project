@@ -3,16 +3,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pulp as pl
-
-
-solver = pl.GLPK_CMD()
-#solver = pl.GUROBI_CMD()
-
-prob = pl.LpProblem("g3", pl.LpMaximize)
+import time
+import warnings
+warnings.filterwarnings("ignore",category=RuntimeWarning)
+#There are some warnings that are not important. This line ignores them. 
+#This is caused by a division by zero in the function v(x, j, n) when x = 0. However, we always use (1+x) in the function, so it is not a problem.
 
 n = int(input("Enter the Number of constraints (1, 2, 3, 5): "))
+start = time.time()
+solver = pl.GLPK_CMD()
+#solver = pl.GUROBI_CMD()
+prob = pl.LpProblem("g3", pl.LpMaximize)
 J = np.arange(0, 40, 2)
-X = np.linspace(0, 10, 1000, endpoint=True)
+X = np.linspace(0, 2, 200, endpoint=True)
 
 
 d = 4
@@ -80,7 +83,7 @@ vals = np.array(vals)
 vals = np.insert(vals, 1, 1)
 vals[0] = -vals[0]
 print("g3~ >=", vals[0])
-X2 = np.linspace(0, 2, 1000)
+X2 = np.linspace(0, 2, 1001)
 f1 = np.zeros(len(X2))
 f2 = np.zeros(len(X2))
 f3 = np.zeros(len(X2))
@@ -92,6 +95,8 @@ for i in range(len(vals)):
     f3 += v(X2, 4, n)[i]*vals[i]/(1+X2)**(i+2)
     f4 += v(X2, 6, n)[i]*vals[i]/(1+X2)**(i+2)
 
+end = time.time()
+print("Time taken: ", end-start)
 
 plt.figure(figsize=(10,10))
 plt.title("Optimal Solution for n = {}".format(n+3))
