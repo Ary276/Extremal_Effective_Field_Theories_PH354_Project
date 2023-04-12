@@ -4,7 +4,7 @@
 ### Course Instructor: Prof. Manish Jain, Department of Physics, Indian Institute of Science
 ### Project Mentor: Prof. Aninda Sinha, Centre for High Energy Physics, Indian Institute of Science
 
-This project aims to reproduce the results of [Caron-Huot, S., Van Duong, V. Extremal effective field theories. J. High Energ. Phys. 2021, 280 (2021).](https://doi.org/10.1007/JHEP05(2021)280) in partial. In particular, the optimal bounds for g3 upto Mandelstam order 7 and g3-g4 exclusion plots have been obtained. The techniques used involve a brute force optimisation method as a naive solution attempt along with Linear Programming. Linear programming was achieved by using a python wrapper package (PuLP) for various linear solvers (GLPK, MOSEK, Gurobi). For details regarding the project and the implementation techniques, please refer to the [Report]. 
+This project aims to reproduce the results of [Caron-Huot, S., Van Duong, V. Extremal effective field theories. J. High Energ. Phys. 2021, 280 (2021).](https://doi.org/10.1007/JHEP05(2021)280) in partial. In particular, the optimal bounds for g3 upto Mandelstam order 7 and g3-g4 exclusion plots have been obtained. The techniques used involve a brute force optimisation method as a naive solution attempt along with Linear Programming. Linear programming was achieved by using a python wrapper package (PuLP) for various linear solvers (GLPK, MOSEK, Gurobi). For details regarding the project and the implementation techniques, please refer to the [Report](https://github.com/Ary276/Extremal_Effective_Field_Theories_PH354_Project/blob/master/Project_Report.pdf). 
 
 If you wish to reproduce the results using these codes, please ensure the following:
 Recommended OS: Linux (Ubuntu 20.04 or greater)
@@ -17,7 +17,7 @@ GLPK can be installed on LINUX using apt install by `$ sudo apt install glpk`. S
 
 [3_sum_rule.py](https://github.com/Ary276/Extremal_Effective_Field_Theories_PH354_Project/blob/master/3_sum_rule.py) is an implementation to solve the Three Sum Rule Warm Up problem presented in [ref](https://arxiv.org/abs/2011.02957v2).
 
-[brute_force.py](https://github.com/Ary276/Extremal_Effective_Field_Theories_PH354_Project/blob/master/brute_force.py) is an implementation to find the lower bound for g3 based on a brute force approach. This brute force search strategy is optimised for better and faster convergence. For more details about its implementation, check [report]. Inputs required: Mandelstam order upto which to compute bound.
+[brute_force.py](https://github.com/Ary276/Extremal_Effective_Field_Theories_PH354_Project/blob/master/brute_force.py) is an implementation to find the lower bound for g3 based on a brute force approach. This brute force search strategy is optimised for better and faster convergence. For more details about its implementation, check [report](https://github.com/Ary276/Extremal_Effective_Field_Theories_PH354_Project/blob/master/Project_Report.pdf). Inputs required: Mandelstam order upto which to compute bound.
 
 [g3_linear_solver.py](https://github.com/Ary276/Extremal_Effective_Field_Theories_PH354_Project/blob/master/g3_linear_solver.py) is an implementation whcih uses Linear Programming to obtain the lower bound for the parameter g3. Input required: Number of constraint equations to use.
 
