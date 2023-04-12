@@ -5,24 +5,37 @@ import matplotlib.pyplot as plt
 import pulp as pl
 import time
 import warnings
+solver_list = pl.listSolvers(onlyAvailable=True)
+print("Available Solver ' " , solver_list)
+if 'MOSEK' in solver_list:
+    import mosek
+    solver = pl.MOSEK(mip=False, sol_type=mosek.soltype.itr)
+elif 'GUROBI_CMD' in solver_list:
+    solver = pl.GUROBI_CMD(mip=False)
+elif 'GLPK_CMD' in solver_list:
+    solver = pl.GLPK_CMD(mip=False)
+else:
+    print('No solver found')
+    exit()
+
 warnings.filterwarnings("ignore",category=RuntimeWarning)
 #There are some warnings that are not important. This line ignores them. 
 #This is caused by a division by zero in the function v(x, j, n) when x = 0. However, we always use (1+x) in the function, so it is not a problem.
 
 n = int(input("Enter the Number of constraints (1, 2, 3, 5): "))
 start = time.time()
-solver = pl.GLPK_CMD()
 #solver = pl.GUROBI_CMD()
+#solver = pl.MOSEK(mip=False, sol_type=mosek.soltype.itr)
 prob = pl.LpProblem("g3", pl.LpMaximize)
-J = np.arange(0, 40, 2)
-X = np.linspace(0, 2, 200, endpoint=True)
+J = np.arange(0, 80, 2)
+X = np.linspace(0, 50, 1000, endpoint=True)
 
 
 d = 4
 
 def v(x, j, n):
     if n == 1:
-        return [1, (3 - (4/(d-2))*(j*(j+d-3)))/((1+x)), ((j*(j+d-3))*(2*(j*(j+d-3))-5*d+4))/((1+x))**2]
+        return [(1+x)**2, (3 - (4/(d-2))*(j*(j+d-3)))*((1+x)), ((j*(j+d-3))*(2*(j*(j+d-3))-5*d+4))]
     
     elif n == 2:
         return [1, (3 - (4/(d-2))*(j*(j+d-3)))/((1+x)), ((j*(j+d-3))*(2*(j*(j+d-3))-5*d+4))/((1+x))**2, \
@@ -81,14 +94,14 @@ for var in prob.variables():
     vals.append(var.varValue)
 vals = np.array(vals)
 vals = np.insert(vals, 1, 1)
-vals[0] = -vals[0]
+
 print("g3~ >=", vals[0])
 X2 = np.linspace(0, 2, 1001)
 f1 = np.zeros(len(X2))
 f2 = np.zeros(len(X2))
 f3 = np.zeros(len(X2))
 f4 = np.zeros(len(X2))
-
+vals[0] = -vals[0]
 for i in range(len(vals)):
     f1 += v(X2, 0, n)[i]*vals[i]/(1+X2)**(i+2)
     f2 += v(X2, 2, n)[i]*vals[i]/(1+X2)**(i+2)
@@ -98,12 +111,12 @@ for i in range(len(vals)):
 end = time.time()
 print("Time taken: ", end-start)
 
-plt.figure(figsize=(10,10))
-plt.title("Optimal Solution for n = {}".format(n+3))
-plt.plot(X2, f1, label="j=0")
-plt.plot(X2, f2, label="j=2")
-plt.plot(X2, f3, label="j=4")
-plt.plot(X2, f4, label="j=6")
-plt.ylim(0, 5)
-plt.legend()
-plt.show()
+#plt.figure(figsize=(10,10))
+#plt.title("Optimal Solution for n = {}".format(n+3))
+#plt.plot(X2, f1, label="j=0")
+#plt.plot(X2, f2, label="j=2")
+#plt.plot(X2, f3, label="j=4")
+#plt.plot(X2, f4, label="j=6")
+#plt.ylim(0, 5)
+#plt.legend()
+#plt.show()

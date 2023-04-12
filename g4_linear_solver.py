@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import pulp as pl
 import multiprocessing as mp
 import time
+#import mosek
 d = 4
 
 def v(x, j, n):
@@ -27,8 +28,8 @@ def v(x, j, n):
 
 def g4_min(g3_A, n, J, X, print_sol = False):
 
-    solver = pl.GLPK_CMD(msg=0)
-
+    solver = pl.GLPK_CMD(msg=0, mip=False)
+    #solver = pl.MOSEK(msg=0, mip=False, sol_type=mosek.soltype.itr)
     prob = pl.LpProblem("g4", pl.LpMaximize)
 
     A = pl.LpVariable("A")
@@ -82,8 +83,8 @@ def g4_min(g3_A, n, J, X, print_sol = False):
 
 def g4_max(g3_A, n, J, X, print_sol = False):
 
-    solver = pl.GLPK_CMD(msg=0)
-
+    solver = pl.GLPK_CMD(msg=0, mip=False)
+    #solver = pl.MOSEK(msg=0, mip=False, sol_type=mosek.soltype.itr)
     prob = pl.LpProblem("g4", pl.LpMinimize)
 
     A = pl.LpVariable("A")
@@ -153,7 +154,7 @@ def plot():
     print("\nPlotting the g3~ g4~ plane")
     dx = 0.01
     dy = 0.00001
-    Xn = np.linspace(0, 5, 500, endpoint=True)
+    Xn = np.linspace(0, 100, 500, endpoint=True)
     g3_s = np.linspace(-11, 3, int(14/dx), endpoint=True)
     x_tick = np.round(np.linspace(-11, 3, 11, endpoint=True), 2)
     y_tick = np.round(np.linspace(0, 0.5, 11, endpoint=True), 2)
@@ -181,23 +182,24 @@ def plot():
     plt.title("g3~ g4~ plane for n = "+str(n+3))
     plt.xticks(np.linspace(0, int(14/dx), 11, endpoint=True), x_tick)
     plt.yticks(np.linspace(0, int(0.5/dy), 11, endpoint=True), y_tick)
-    plt.savefig("g3_g4_plane_n="+str(n+3)+"xy.png", dpi=1000)
+    plt.savefig("g3_g4_plane_n="+str(n+3)+"ayaya.png", dpi=1000)
     plt.show()
 
 
 if __name__ == "__main__":
     n = int(input("Enter the Number of constraints (1, 2, 3, 5): "))
     start = time.time()
-    g3_A = -10
+    g3_A = float(input("Enter the value of g3~ (between -11 and 3): "))
     Js = np.arange(0, 40, 2)
-    Xs = np.linspace(0, 2, 200, endpoint=True)
+    Xs = np.linspace(0, 100, 500, endpoint=True)
+    print("\nMinimum")
     vals = g4_min(g3_A, n, Js, Xs, print_sol=True)
     print("g4~ >= ", vals[0] + g3_A*vals[1], "for g3 = ", g3_A)
-    print("\n")
+    print("\nMaximum")
     vals = g4_max(g3_A, n, Js, Xs, print_sol=True)
     print(vals)
     print("g4~ <= ", vals[0] + g3_A*vals[1], "for g3 = ", g3_A)
     print("\n")
-    plot()
+    #plot()
     end = time.time()
     print("\nTime taken: ", end-start)
