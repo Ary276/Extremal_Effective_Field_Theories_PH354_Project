@@ -4,7 +4,7 @@
 ### Course Instructor: Prof. Manish Jain, Department of Physics, Indian Institute of Science
 ### Project Mentor: Prof. Aninda Sinha, Centre for High Energy Physics, Indian Institute of Science
 
-This project aims to reproduce the results of Caron-Huot, S., Van Duong, V. Extremal effective field theories. J. High Energ. Phys. 2021, 280 (2021). [doi](https://doi.org/10.1007/JHEP05(2021)280) in partial. In particular, the optimal bounds for g3 upto Mandelstam order 7 and g3-g4 exclusion plots have been obtained. The techniques used involve a brute force optimisation method as a naive solution attempt along with Linear Programming. Linear programming was achieved by using a python wrapper package (PuLP) for various linear solvers (GLPK, MOSEK, Gurobi). For details regarding the project and the implementation techniques, please refer to the [Report]. 
+This project aims to reproduce the results of [Caron-Huot, S., Van Duong, V. Extremal effective field theories. J. High Energ. Phys. 2021, 280 (2021).](https://doi.org/10.1007/JHEP05(2021)280) in partial. In particular, the optimal bounds for g3 upto Mandelstam order 7 and g3-g4 exclusion plots have been obtained. The techniques used involve a brute force optimisation method as a naive solution attempt along with Linear Programming. Linear programming was achieved by using a python wrapper package (PuLP) for various linear solvers (GLPK, MOSEK, Gurobi). For details regarding the project and the implementation techniques, please refer to the [Report]. 
 
 If you wish to reproduce the results using these codes, please ensure the following:
 Recommended OS: Linux (Ubuntu 20.04 or greater)
